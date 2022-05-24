@@ -19,7 +19,7 @@
 
 // we read up-to 64 DTC codes - if a vehicle has more than this value, I mean,
 // why are you using that car??
-#define OBD2_MAX_ERR_CODES 64
+#define OBD2_MAX_ERR_CODES 64U
 #define DECLARE_OBD2_DTC(X) uint8_t(X[OBD2_MAX_ERR_CODES]) = { 0U }
 #define OBD2_SIZE 4U
 #define DECLARE_OBD2_DATA(X) uint8_t(X[OBD2_SIZE])
@@ -166,8 +166,10 @@ float OBD_get_actual_gear(void);
  * for creating the array.
  * 
  * @param errs buffer in which to store DTCs.
+ * 
+ * @return int number of read bytes.
  */
-void OBD_get_DTC(uint8_t errs[OBD2_MAX_ERR_CODES]);
+int OBD_get_DTC(uint8_t errs[OBD2_MAX_ERR_CODES]);
 
 /**
  * @brief Clears all the stored DTCs at the vehicle.

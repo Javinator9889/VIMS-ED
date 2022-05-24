@@ -35,7 +35,10 @@ int OBD_init(void)
     return ret;
 }
 
-void OBD_end(void) { OBD2.end(); }
+void OBD_end(void) {
+    initialized = false;
+    OBD2.end();
+}
 
 static FU32 OBD_read(uint8_t pid)
 {
@@ -117,7 +120,6 @@ float OBD_get_odometer(void)
     return OBD2_EXPAND(value) / 10.0;
 }
 
-// TODO
 float OBD_get_actual_gear(void)
 {
     assert(initialized);
@@ -132,20 +134,14 @@ float OBD_get_actual_gear(void)
     return ((256.0 * C(value)) + D(value)) / 1000.0;
 }
 
-// TODO
-uint8_t OBD_get_DTC(void)
+int OBD_get_DTC(uint8_t errs[OBD2_MAX_ERR_CODES])
 {
     assert(initialized);
-    // internally, this is handled as a buffer. We are just trying to read
-    // one byte, so our "buffer" is just a single-element array
-    uint8_t value[1];
-    if (!OBD2.pidRead(0x03, OBD2_DATA_ADDR(value), OBD2_DATA_SIZE(value)))
-        return 0;
 
-    return value[0];
+    int read = OBD2.pidRead(0x03, errs, OBD2_MAX_ERR_CODES);
+    return (int) (read / 6);
 }
 
-// TODO
 int OBD_clear_DTC(void)
 {
     assert(initialized);
